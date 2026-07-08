@@ -10,7 +10,7 @@
     <!-- ========================================= -->
     <script>
         // 🔴 WAJIB GANTI dengan URL hasil deploy Apps Script Anda
-        const GAS_URL = 'https://script.google.com/macros/s/AKfycbzHqr6MpnPjg8EdhmkakmPediiYJlVtiMZE_jSD_s2WOZiH5/exec';
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycby4GtAcryTWKrWeqokqgnZ54AVG4PblZZFxihYv24iN2e_ZmwafuDzs9qj1eiHPuGy5/exec';
         // Contoh: const GAS_URL = 'https://script.google.com/macros/s/AKfycbwXYZ123/exec';
     </script>
     
@@ -515,6 +515,9 @@
                     else if (functionName === 'exportAllData') {
                         result = await callBackend('exportAllData', {});
                     }
+                    else if (functionName === 'testConnection') {
+                        result = await callBackend('testConnection', {});
+                    }
                     else {
                         result = await mockFunction(functionName, ...args);
                     }
@@ -559,9 +562,9 @@
                 if (action === 'read') {
                     return mockDB[sheetName] || [];
                 } else if (action === 'create' || action === 'update') {
-                    return { success: true, message: 'Data berhasil disimpan (Demo)' };
+                    return { success: true, message: '✅ Data berhasil disimpan (Demo)' };
                 } else if (action === 'delete') {
-                    return { success: true, message: 'Data berhasil dihapus (Demo)' };
+                    return { success: true, message: '✅ Data berhasil dihapus (Demo)' };
                 }
                 return { success: false, message: 'Mock: Action tidak dikenal' };
             }
@@ -573,18 +576,18 @@
                     mockDB.Borrowing[index].Status = 'Dikembalikan';
                     mockDB.Borrowing[index]['Tanggal Kembali'] = getCurrentDateWIB();
                     if (returnPhoto) mockDB.Borrowing[index]['Foto Kembali'] = returnPhoto;
-                    return { success: true, message: 'Tool berhasil dikembalikan pada ' + getCurrentDateWIB() };
+                    return { success: true, message: '✅ Tool berhasil dikembalikan pada ' + getCurrentDateWIB() };
                 }
                 return { success: false, message: 'Data peminjaman tidak ditemukan' };
             }
             else if (functionName === 'setupDatabase') {
-                return { success: true, message: 'Database berhasil di-setup (Demo)' };
+                return { success: true, message: '✅ Database berhasil di-setup (Demo)' };
             }
             return { success: true, message: 'Mock: Fungsi berhasil dijalankan' };
         }
 
         // ====================================================
-        // 5. APP STATE
+        // 5. APP STATE & SCHEMA
         // ====================================================
         
         let appState = {
@@ -619,7 +622,7 @@
         const userAccessibleMenus = ['Borrowing'];
 
         // ====================================================
-        // 6. UI FUNCTIONS
+        // 6. UI FUNCTIONS (SAME AS BEFORE)
         // ====================================================
         
         function showLoader() { document.getElementById('loader').classList.remove('hidden'); }
@@ -717,7 +720,7 @@
         }
 
         // ====================================================
-        // 8. NAVIGATION
+        // 8. NAVIGATION & DASHBOARD
         // ====================================================
         
         async function navigate(menu) {
@@ -757,10 +760,6 @@
             }
         }
 
-        // ====================================================
-        // 9. DASHBOARD
-        // ====================================================
-        
         async function loadDashboard() {
             try {
                 let projects, tools, products;
@@ -789,7 +788,7 @@
         }
 
         // ====================================================
-        // 10. TABLE DATA
+        // 9. TABLE DATA (CRUD)
         // ====================================================
         
         async function loadTableData(sheetName) {
@@ -897,7 +896,7 @@
         function filterTable() { renderTable(); }
 
         // ====================================================
-        // 11. MODAL CRUD
+        // 10. MODAL CRUD
         // ====================================================
         
         function openModal(mode, id = null) {
@@ -1055,7 +1054,7 @@
                 }
             } catch (error) {
                 console.error('Save error:', error);
-                toast('Data berhasil disimpan (Demo Mode)');
+                toast('✅ Data berhasil disimpan (Demo Mode)');
                 closeModal();
                 if(menu === 'Projects') mockDB.Projects.push({...payload, ID: 'p'+Date.now(), No: mockDB.Projects.length+1});
                 else if(menu === 'Spareparts') mockDB.Spareparts.push({...payload, ID: 's'+Date.now(), No: mockDB.Spareparts.length+1});
@@ -1122,7 +1121,7 @@
         }
 
         // ====================================================
-        // 12. PENGEMBALIAN TOOL
+        // 11. PENGEMBALIAN TOOL
         // ====================================================
         
         let returnId = null;
@@ -1198,7 +1197,7 @@
                             }
                         }
                         
-                        toast('Tool berhasil dikembalikan pada ' + getCurrentDateWIB() + ' (Demo)');
+                        toast('✅ Tool berhasil dikembalikan pada ' + getCurrentDateWIB() + ' (Demo)');
                         closeReturnModal();
                         await loadTableData('Borrowing');
                     }
@@ -1207,7 +1206,7 @@
         }
 
         // ====================================================
-        // 13. KAMERA - LIVE CAMERA (UTAMA)
+        // 12. KAMERA - LIVE CAMERA
         // ====================================================
         
         let cameraStream = null;
@@ -1222,20 +1221,17 @@
             const guide = document.getElementById('cameraGuide');
             const btnCapture = document.getElementById('btnCapture');
             
-            // Reset
             btnCapture.disabled = true;
             loading.classList.remove('hidden');
             guide.classList.add('hidden');
             modal.classList.remove('hidden');
             
-            // Stop stream lama
             if (cameraStream) {
                 cameraStream.getTracks().forEach(track => track.stop());
                 cameraStream = null;
             }
             
             try {
-                // Coba akses kamera
                 const stream = await navigator.mediaDevices.getUserMedia({
                     video: { 
                         facingMode: 'user',
@@ -1255,7 +1251,6 @@
                     video.play().catch(() => {});
                 };
                 
-                // Fallback timeout
                 setTimeout(() => {
                     if (loading && !loading.classList.contains('hidden')) {
                         loading.classList.add('hidden');
@@ -1321,7 +1316,6 @@
             
             const ctx = canvas.getContext('2d');
             
-            // Mirror image (selfie mode)
             ctx.translate(width, 0);
             ctx.scale(-1, 1);
             ctx.drawImage(video, 0, 0, width, height);
@@ -1378,7 +1372,7 @@
         }
 
         // ====================================================
-        // 14. EXPORT FUNCTIONS
+        // 13. EXPORT FUNCTIONS
         // ====================================================
         
         function exportTableToCSV() {
@@ -1432,15 +1426,39 @@
         async function runSetup() {
             try {
                 const res = await server.run('setupDatabase');
-                Swal.fire('Database Setup', (res && res.message) || 'Setup database berhasil!', 'success');
+                Swal.fire('Database Setup', (res && res.message) || '✅ Setup database berhasil!', 'success');
             } catch (error) {
                 console.error('Setup error:', error);
-                Swal.fire('Database Setup', 'Setup database berhasil (Demo Mode)', 'success');
+                Swal.fire('Database Setup', '✅ Setup database berhasil (Demo Mode)', 'success');
+            }
+        }
+
+        async function testConnection() {
+            try {
+                const result = await server.run('testConnection');
+                if (result && result.success) {
+                    Swal.fire({
+                        title: '✅ Koneksi Berhasil',
+                        html: `
+                            <div class="text-left">
+                                <p><strong>Status:</strong> ${result.message}</p>
+                                <p><strong>Sheets:</strong> ${result.sheets ? result.sheets.join(', ') : 'Tidak ada'}</p>
+                                <p><strong>Total Sheets:</strong> ${result.totalSheets || 0}</p>
+                                ${result.usersCount !== undefined ? `<p><strong>Users:</strong> ${result.usersCount} data</p>` : ''}
+                            </div>
+                        `,
+                        icon: 'success'
+                    });
+                } else {
+                    Swal.fire('❌ Koneksi Gagal', (result && result.message) || 'Tidak dapat terhubung ke backend', 'error');
+                }
+            } catch (error) {
+                Swal.fire('❌ Error', 'Gagal test koneksi: ' + error.message, 'error');
             }
         }
 
         // ====================================================
-        // 15. INIT
+        // 14. INIT
         // ====================================================
         
         document.addEventListener('DOMContentLoaded', function() {
@@ -1448,11 +1466,16 @@
             console.log('📡 Backend URL:', GAS_URL);
             console.log('📱 Support camera:', !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia));
             
-            // Cek dark mode default
             if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
                 document.documentElement.classList.add('dark');
                 document.getElementById('themeIcon').className = 'fas fa-sun';
             }
+            
+            // Auto test connection
+            setTimeout(() => {
+                console.log('🔍 Testing connection...');
+                testConnection();
+            }, 2000);
         });
     </script>
 </body>
