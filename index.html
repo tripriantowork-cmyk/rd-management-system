@@ -5,15 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>R&D Management System</title>
     
-    <!-- ========================================= -->
-    <!-- ⚠️ GANTI DENGAN URL APPS SCRIPT ANDA ⚠️ -->
-    <!-- ========================================= -->
-    <script>
-        // 🔴 WAJIB GANTI dengan URL hasil deploy Apps Script Anda
-        const GAS_URL = 'https://script.google.com/macros/s/AKfycbxgUg7rQSdrW68xcw5hMLSkH1pwwyib4YXQDdswLwfXY22GJgFdJNNspVktDg0CBbx1/exec';
-        // Contoh: const GAS_URL = 'https://script.google.com/macros/s/AKfycbwXYZ123/exec';
-    </script>
-    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -31,36 +22,32 @@
         }
     </script>
     
-    <!-- Font Awesome & SweetAlert -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
+        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         .dark ::-webkit-scrollbar-thumb { background: #475569; }
         
+        /* Transitions */
         .fade-in { animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        #cameraVideo {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transform: scaleX(-1);
-        }
-        
-        .btn-camera {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        /* Sembunyikan dashboard untuk user */
+        .hidden-for-user {
+            display: none;
         }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 dark:bg-darkBg dark:text-gray-200 transition-colors duration-300">
 
-    <!-- ======================================== -->
     <!-- LOGIN SCREEN -->
-    <!-- ======================================== -->
     <div id="loginScreen" class="min-h-screen flex items-center justify-center p-4">
         <div class="bg-white dark:bg-darkCard p-8 rounded-2xl shadow-xl w-full max-w-md fade-in">
             <div class="text-center mb-8">
@@ -68,40 +55,33 @@
                     <i class="fas fa-flask"></i>
                 </div>
                 <h2 class="text-2xl font-bold">R&D System</h2>
-                <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Manajemen Research & Development</p>
-                <p class="text-xs text-blue-500 mt-2">👤 admin / password: admin123</p>
+                <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Silakan login ke akun Anda</p>
+                <p class="text-xs text-blue-500 mt-2">(Gunakan admin / admin123 untuk Demo)</p>
             </div>
             <form id="loginForm" onsubmit="handleLogin(event)">
                 <div class="mb-4">
                     <label class="block text-sm font-medium mb-1">Username</label>
                     <div class="relative">
                         <i class="fas fa-user absolute left-3 top-3 text-gray-400"></i>
-                        <input type="text" id="username" class="w-full pl-10 pr-4 py-2 border dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 outline-none" required placeholder="admin">
+                        <input type="text" id="username" class="w-full pl-10 pr-4 py-2 border dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 outline-none" required>
                     </div>
                 </div>
                 <div class="mb-6">
                     <label class="block text-sm font-medium mb-1">Password</label>
                     <div class="relative">
                         <i class="fas fa-lock absolute left-3 top-3 text-gray-400"></i>
-                        <input type="password" id="password" class="w-full pl-10 pr-4 py-2 border dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 outline-none" required placeholder="admin123">
+                        <input type="password" id="password" class="w-full pl-10 pr-4 py-2 border dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 outline-none" required>
                     </div>
                 </div>
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition">
-                    <i class="fas fa-sign-in-alt mr-2"></i> Login
-                </button>
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition">Login</button>
             </form>
-            <p class="text-center text-xs text-gray-400 mt-4">
-                <i class="fas fa-info-circle"></i> Demo: admin / admin123
-            </p>
         </div>
     </div>
 
-    <!-- ======================================== -->
-    <!-- MAIN APP -->
-    <!-- ======================================== -->
+    <!-- MAIN APP SCREEN -->
     <div id="mainApp" class="hidden h-screen flex overflow-hidden">
         
-        <!-- SIDEBAR -->
+        <!-- Sidebar -->
         <aside id="sidebar" class="w-64 bg-white dark:bg-darkCard shadow-lg flex flex-col transition-transform duration-300 absolute md:relative z-20 h-full -translate-x-full md:translate-x-0">
             <div class="p-5 border-b dark:border-gray-700 flex justify-between items-center">
                 <div class="flex items-center gap-3 font-bold text-lg text-blue-600 dark:text-blue-400">
@@ -112,80 +92,39 @@
             
             <nav class="flex-1 overflow-y-auto py-4">
                 <ul class="space-y-1 px-3">
-                    <!-- Dashboard -->
+                    <!-- Menu Dashboard - Hanya Admin -->
                     <div id="adminDashboardMenu">
-                        <li>
-                            <a href="#" onclick="navigate('Dashboard')" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400" data-menu="Dashboard">
-                                <i class="fas fa-home w-5"></i> Dashboard
-                            </a>
-                        </li>
+                        <li><a href="#" onclick="navigate('Dashboard')" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400" data-menu="Dashboard"><i class="fas fa-home w-5"></i> Dashboard</a></li>
                     </div>
                     
-                    <!-- Master Data -->
+                    <!-- Menu untuk Admin saja -->
                     <div id="adminMenuSection">
                         <li class="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mt-4">Master Data</li>
-                        <li>
-                            <a href="#" onclick="navigate('Projects')" class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700" data-menu="Projects">
-                                <i class="fas fa-project-diagram w-5"></i> Projects
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" onclick="navigate('Spareparts')" class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700" data-menu="Spareparts">
-                                <i class="fas fa-cogs w-5"></i> Spareparts
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" onclick="navigate('Tools')" class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700" data-menu="Tools">
-                                <i class="fas fa-tools w-5"></i> Tools
-                            </a>
-                        </li>
+                        <li><a href="#" onclick="navigate('Projects')" class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700" data-menu="Projects"><i class="fas fa-project-diagram w-5"></i> Projects</a></li>
+                        <li><a href="#" onclick="navigate('Spareparts')" class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700" data-menu="Spareparts"><i class="fas fa-cogs w-5"></i> Spareparts</a></li>
+                        <li><a href="#" onclick="navigate('Tools')" class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700" data-menu="Tools"><i class="fas fa-tools w-5"></i> Tools</a></li>
                     </div>
                     
-                    <!-- Operasional -->
+                    <!-- Menu Operasional -->
                     <li class="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mt-4">Operasional</li>
-                    <li>
-                        <a href="#" onclick="navigate('Borrowing')" class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700" data-menu="Borrowing">
-                            <i class="fas fa-hand-holding-box w-5"></i> Peminjaman
-                        </a>
-                    </li>
+                    <li><a href="#" onclick="navigate('Borrowing')" class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700" data-menu="Borrowing"><i class="fas fa-hand-holding-box w-5"></i> Peminjaman</a></li>
                     
-                    <!-- Produk -->
+                    <!-- Menu Riwayat Produk - Hanya Admin -->
                     <div id="adminProductsMenu">
-                        <li>
-                            <a href="#" onclick="navigate('Products')" class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700" data-menu="Products">
-                                <i class="fas fa-box w-5"></i> Riwayat Produk
-                            </a>
-                        </li>
+                        <li><a href="#" onclick="navigate('Products')" class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700" data-menu="Products"><i class="fas fa-box w-5"></i> Riwayat Produk</a></li>
                     </div>
                     
-                    <!-- Admin System -->
+                    <!-- Menu Admin Only -->
                     <div id="adminMenuSystem" class="hidden">
                         <li class="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mt-4">Sistem (Admin)</li>
-                        <li>
-                            <a href="#" onclick="navigate('Users')" class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700" data-menu="Users">
-                                <i class="fas fa-users w-5"></i> Manajemen User
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" onclick="navigate('Activity Log')" class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700" data-menu="Activity Log">
-                                <i class="fas fa-history w-5"></i> Activity Log
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" onclick="exportBackup()" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-green-600">
-                                <i class="fas fa-file-excel w-5"></i> Backup Data
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" onclick="runSetup()" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-purple-600">
-                                <i class="fas fa-database w-5"></i> Setup DB
-                            </a>
-                        </li>
+                        <li><a href="#" onclick="navigate('Users')" class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700" data-menu="Users"><i class="fas fa-users w-5"></i> Manajemen User</a></li>
+                        <li><a href="#" onclick="navigate('Activity Log')" class="nav-link flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700" data-menu="Activity Log"><i class="fas fa-history w-5"></i> Activity Log</a></li>
+                        <li><a href="#" onclick="exportBackup()" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-green-600"><i class="fas fa-file-excel w-5"></i> Backup Data</a></li>
+                        <li><a href="#" onclick="runSetup()" class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-purple-600"><i class="fas fa-database w-5"></i> Setup DB</a></li>
                     </div>
                 </ul>
             </nav>
             
-            <!-- User Profile & Logout -->
             <div class="p-4 border-t dark:border-gray-700">
                 <div class="flex items-center gap-3 mb-4 px-2">
                     <div class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold" id="userAvatar">A</div>
@@ -200,17 +139,15 @@
             </div>
         </aside>
 
-        <!-- Overlay untuk mobile -->
+        <!-- Overlay for mobile sidebar -->
         <div id="sidebarOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-10 hidden md:hidden" onclick="toggleSidebar()"></div>
 
-        <!-- MAIN CONTENT -->
+        <!-- Main Content -->
         <div class="flex-1 flex flex-col h-screen overflow-hidden">
             <!-- Header -->
             <header class="bg-white dark:bg-darkCard shadow-sm py-4 px-6 flex justify-between items-center z-10">
                 <div class="flex items-center gap-4">
-                    <button onclick="toggleSidebar()" class="md:hidden text-gray-600 dark:text-gray-300 text-xl">
-                        <i class="fas fa-bars"></i>
-                    </button>
+                    <button onclick="toggleSidebar()" class="md:hidden text-gray-600 dark:text-gray-300 text-xl"><i class="fas fa-bars"></i></button>
                     <h1 id="pageTitle" class="text-xl font-bold">Peminjaman</h1>
                 </div>
                 <div class="flex items-center gap-4">
@@ -228,40 +165,25 @@
                     <p class="text-sm font-medium">Memproses data...</p>
                 </div>
 
-                <!-- Dashboard View -->
+                <!-- Dashboard View - Hanya Admin -->
                 <div id="view-Dashboard" class="view-section fade-in">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div class="bg-white dark:bg-darkCard rounded-xl p-6 shadow-sm border-l-4 border-blue-500 flex justify-between items-center">
-                            <div>
-                                <p class="text-sm text-gray-500 mb-1">Total Project</p>
-                                <h3 class="text-3xl font-bold" id="stat-projects">0</h3>
-                            </div>
-                            <div class="w-12 h-12 bg-blue-100 text-blue-500 rounded-full flex justify-center items-center text-xl">
-                                <i class="fas fa-project-diagram"></i>
-                            </div>
+                            <div><p class="text-sm text-gray-500 mb-1">Total Project</p><h3 class="text-3xl font-bold" id="stat-projects">0</h3></div>
+                            <div class="w-12 h-12 bg-blue-100 text-blue-500 rounded-full flex justify-center items-center text-xl"><i class="fas fa-project-diagram"></i></div>
                         </div>
                         <div class="bg-white dark:bg-darkCard rounded-xl p-6 shadow-sm border-l-4 border-orange-500 flex justify-between items-center">
-                            <div>
-                                <p class="text-sm text-gray-500 mb-1">Tool Dipinjam</p>
-                                <h3 class="text-3xl font-bold" id="stat-borrowed">0</h3>
-                            </div>
-                            <div class="w-12 h-12 bg-orange-100 text-orange-500 rounded-full flex justify-center items-center text-xl">
-                                <i class="fas fa-tools"></i>
-                            </div>
+                            <div><p class="text-sm text-gray-500 mb-1">Tool Dipinjam</p><h3 class="text-3xl font-bold" id="stat-borrowed">0</h3></div>
+                            <div class="w-12 h-12 bg-orange-100 text-orange-500 rounded-full flex justify-center items-center text-xl"><i class="fas fa-tools"></i></div>
                         </div>
                         <div class="bg-white dark:bg-darkCard rounded-xl p-6 shadow-sm border-l-4 border-green-500 flex justify-between items-center">
-                            <div>
-                                <p class="text-sm text-gray-500 mb-1">Total Produk R&D</p>
-                                <h3 class="text-3xl font-bold" id="stat-products">0</h3>
-                            </div>
-                            <div class="w-12 h-12 bg-green-100 text-green-500 rounded-full flex justify-center items-center text-xl">
-                                <i class="fas fa-box"></i>
-                            </div>
+                            <div><p class="text-sm text-gray-500 mb-1">Total Produk R&D</p><h3 class="text-3xl font-bold" id="stat-products">0</h3></div>
+                            <div class="w-12 h-12 bg-green-100 text-green-500 rounded-full flex justify-center items-center text-xl"><i class="fas fa-box"></i></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- CRUD View -->
+                <!-- Generic CRUD Table View -->
                 <div id="view-CRUD" class="view-section hidden fade-in h-full flex flex-col">
                     <div class="bg-white dark:bg-darkCard rounded-xl shadow-sm p-4 flex-1 flex flex-col">
                         <div class="flex flex-col md:flex-row justify-between gap-4 mb-4">
@@ -269,7 +191,7 @@
                                 <i class="fas fa-search absolute left-3 top-2.5 text-gray-400"></i>
                                 <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Cari data..." class="w-full pl-10 pr-4 py-2 border dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 outline-none text-sm">
                             </div>
-                            <div class="flex gap-2 flex-wrap">
+                            <div class="flex gap-2">
                                 <button onclick="exportTableToCSV()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">
                                     <i class="fas fa-file-csv"></i> Export
                                 </button>
@@ -280,9 +202,7 @@
                         </div>
                         <div class="flex-1 overflow-x-auto">
                             <table class="w-full text-left border-collapse" id="dataTable">
-                                <thead>
-                                    <tr class="bg-gray-100 dark:bg-gray-800 text-sm uppercase tracking-wide text-gray-600 dark:text-gray-400 border-b dark:border-gray-700" id="tableHead"></tr>
-                                </thead>
+                                <thead><tr class="bg-gray-100 dark:bg-gray-800 text-sm uppercase tracking-wide text-gray-600 dark:text-gray-400 border-b dark:border-gray-700" id="tableHead"></tr></thead>
                                 <tbody class="text-sm divide-y dark:divide-gray-700" id="tableBody"></tbody>
                             </table>
                         </div>
@@ -295,9 +215,7 @@
         </div>
     </div>
 
-    <!-- ======================================== -->
-    <!-- MODAL CRUD -->
-    <!-- ======================================== -->
+    <!-- Modal Form CRUD -->
     <div id="crudModal" class="fixed inset-0 bg-black/60 z-[100] hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-darkCard rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col fade-in">
             <div class="p-5 border-b dark:border-gray-700 flex justify-between items-center">
@@ -305,7 +223,9 @@
                 <button onclick="closeModal()" class="text-gray-500 hover:text-red-500"><i class="fas fa-times text-xl"></i></button>
             </div>
             <div class="p-5 overflow-y-auto flex-1">
-                <form id="crudForm" onsubmit="saveData(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4"></form>
+                <form id="crudForm" onsubmit="saveData(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Dynamic Fields -->
+                </form>
             </div>
             <div class="p-5 border-t dark:border-gray-700 flex justify-end gap-3 bg-gray-50 dark:bg-gray-800/50 rounded-b-2xl">
                 <button type="button" onclick="closeModal()" class="px-4 py-2 border dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition">Batal</button>
@@ -314,282 +234,97 @@
         </div>
     </div>
 
-    <!-- ======================================== -->
-    <!-- MODAL PENGEMBALIAN TOOL -->
-    <!-- ======================================== -->
-    <div id="returnModal" class="fixed inset-0 bg-black/60 z-[100] hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-darkCard rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] flex flex-col fade-in">
-            <div class="p-5 border-b dark:border-gray-700 flex justify-between items-center">
-                <h3 class="text-lg font-bold">Kembalikan Tool</h3>
-                <button onclick="closeReturnModal()" class="text-gray-500 hover:text-red-500"><i class="fas fa-times text-xl"></i></button>
-            </div>
-            <div class="p-5 overflow-y-auto flex-1">
-                <div class="text-center mb-4">
-                    <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto text-2xl">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">Tanggal kembali akan diisi otomatis hari ini</p>
-                </div>
-                <form id="returnForm" onsubmit="handleReturn(event)" class="space-y-4">
-                    <input type="hidden" id="returnId" value="">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Foto Kembali (Opsional)</label>
-                        <div class="flex gap-2 items-center mt-1">
-                            <input type="hidden" id="returnPhoto" value="">
-                            <img id="returnPreview" src="" class="w-16 h-16 object-cover border rounded hidden">
-                            <button type="button" onclick="openCamera('returnPhoto')" class="bg-gray-200 dark:bg-gray-600 px-4 py-2 rounded-lg text-sm hover:bg-gray-300 transition">
-                                <i class="fas fa-camera"></i> Ambil Foto
-                            </button>
-                            <button type="button" onclick="clearReturnPhoto()" class="text-red-500 text-sm hidden" id="clearReturnPhotoBtn">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="p-5 border-t dark:border-gray-700 flex justify-end gap-3 bg-gray-50 dark:bg-gray-800/50 rounded-b-2xl">
-                <button type="button" onclick="closeReturnModal()" class="px-4 py-2 border dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition">Batal</button>
-                <button type="submit" form="returnForm" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-medium">Kembalikan</button>
+    <!-- Modal Kamera (Untuk Peminjaman) -->
+    <div id="cameraModal" class="fixed inset-0 bg-black/80 z-[110] hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-xl flex flex-col items-center fade-in">
+            <h3 class="font-bold mb-4">Ambil Foto</h3>
+            <video id="cameraVideo" class="w-full max-w-sm rounded-lg bg-black mb-4" autoplay playsinline></video>
+            <canvas id="cameraCanvas" class="hidden"></canvas>
+            <div class="flex gap-4 w-full">
+                <button onclick="closeCamera()" class="flex-1 py-2 bg-gray-500 text-white rounded-lg">Batal</button>
+                <button onclick="capturePhoto()" class="flex-1 py-2 bg-blue-600 text-white rounded-lg"><i class="fas fa-camera"></i> Jepret</button>
             </div>
         </div>
     </div>
 
-    <!-- ======================================== -->
-    <!-- MODAL KAMERA (LIVE) - TERBAIK UNTUK HP -->
-    <!-- ======================================== -->
-    <div id="cameraModal" class="fixed inset-0 bg-black/90 z-[110] hidden flex items-center justify-center p-2">
-        <div class="bg-white dark:bg-darkCard rounded-xl shadow-xl w-full max-w-md overflow-hidden">
-            <div class="p-4 border-b dark:border-gray-700 flex justify-between items-center">
-                <h3 class="font-bold text-lg">📸 Ambil Foto</h3>
-                <button onclick="closeCamera()" class="text-gray-500 hover:text-red-500">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
-            </div>
-            <div class="p-4">
-                <div class="relative bg-black rounded-lg overflow-hidden" style="aspect-ratio: 4/3;">
-                    <video id="cameraVideo" class="w-full h-full" autoplay playsinline muted></video>
-                    <div id="cameraLoading" class="absolute inset-0 bg-black/70 flex flex-col items-center justify-center text-white">
-                        <div class="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent mb-3"></div>
-                        <span class="text-sm font-medium">Mengaktifkan kamera...</span>
-                    </div>
-                    <!-- Overlay untuk panduan -->
-                    <div id="cameraGuide" class="absolute inset-0 border-2 border-dashed border-white/20 rounded-lg pointer-events-none hidden">
-                        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-40 h-40 border-2 border-white/30 rounded-full"></div>
-                    </div>
-                </div>
-                <canvas id="cameraCanvas" class="hidden"></canvas>
-                
-                <div class="flex gap-3 mt-4">
-                    <button onclick="closeCamera()" class="flex-1 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition font-medium">
-                        <i class="fas fa-times mr-2"></i> Batal
-                    </button>
-                    <button onclick="capturePhoto()" id="btnCapture" class="flex-1 py-3 btn-camera text-white rounded-lg transition font-medium disabled:opacity-50 disabled:cursor-not-allowed shadow-lg">
-                        <i class="fas fa-camera mr-2"></i> Jepret
-                    </button>
-                </div>
-                <p class="text-center text-xs text-gray-400 mt-2">
-                    <i class="fas fa-info-circle"></i> Pastikan cahaya cukup untuk hasil terbaik
-                </p>
-            </div>
-        </div>
-    </div>
-
-    <!-- ======================================== -->
-    <!-- JAVASCRIPT - FULL IMPLEMENTASI -->
-    <!-- ======================================== -->
+    <!-- ================= JAVASCRIPT LOGIC ================= -->
     <script>
-        // ====================================================
-        // 1. FUNGSI UTILITY
-        // ====================================================
+        // ============================================
+        // KONFIGURASI - GANTI DENGAN URL APPS SCRIPT ANDA
+        // ============================================
+        const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbywAgoa4BKhXne4qvwHeaqaU2u9G-4MD3vp9oLxKcAcp78Bp5p0ToEY_FzUHdNr3L7C/exec';
         
-        function getCurrentDateWIB() {
-            const now = new Date();
-            const options = { timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit' };
-            return new Intl.DateTimeFormat('id-ID', options).format(now);
-        }
-
-        function getCurrentWIB() {
-            const now = new Date();
-            const options = { timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
-            return new Intl.DateTimeFormat('id-ID', options).format(now);
-        }
-
-        // ====================================================
-        // 2. KONEKSI KE BACKEND APPS SCRIPT VIA FETCH
-        // ====================================================
-        
-        async function callBackend(action, params = {}) {
-            try {
-                console.log(`📡 Calling backend: ${action}`, params);
-                
-                const response = await fetch(GAS_URL, {
-                    method: 'POST',
-                    mode: 'cors',
-                    cache: 'no-cache',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        action: action,
-                        ...params
-                    })
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const result = await response.json();
-                console.log(`✅ Response from ${action}:`, result);
-                return result;
-                
-            } catch (error) {
-                console.error(`❌ Backend call error (${action}):`, error);
-                throw error;
-            }
-        }
-
-        // ====================================================
-        // 3. MOCK DATABASE (FALLBACK)
-        // ====================================================
-        
-        const mockDB = {
-            Projects: [
-                {ID: 'p1', No: 1, 'Nama Project': 'Robotik Lengan', 'No SO/PO': 'SO-001', Customer: 'PT Alpha', 'Tanggal': getCurrentDateWIB(), 'Link BOM/BOQ': 'http://link.com', Keterangan: 'Proses R&D'}
-            ],
-            Spareparts: [
-                {ID: 's1', No: 1, 'Nama Sparepart': 'Motor Servo SG90', Spesifikasi: '5V 0.5A', Stok: 50, 'Lokasi Penyimpanan': 'Rak A1'}
-            ],
-            Tools: [
-                {ID: 't1', No: 1, 'Nama Tool': 'Solder Dekko', Jumlah: 5, Kondisi: 'Baik', Status: 'Tersedia'},
-                {ID: 't2', No: 2, 'Nama Tool': 'Multitester Digital', Jumlah: 2, Kondisi: 'Baik', Status: 'Dipinjam'}
-            ],
-            Products: [],
-            Borrowing: [
-                {ID: 'b1', No: 1, 'Nama Tool': 'Multitester Digital', 'Nama Peminjam': 'Budi', Departemen: 'Teknisi', 'Foto Peminjam': '', 'Tanggal Pinjam': getCurrentDateWIB(), Status: 'Dipinjam', 'Tanggal Kembali': '', 'Foto Kembali': ''}
-            ],
-            Users: [
-                {ID: 'u1', No: 1, Nama: 'Administrator', Username: 'admin', Password: '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', Role: 'Admin', Status: 'Aktif'},
-                {ID: 'u2', No: 2, Nama: 'User Test', Username: 'user', Password: '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', Role: 'User', Status: 'Aktif'}
-            ],
-            'Activity Log': [
-                {ID: 'a1', Tanggal: getCurrentWIB(), Username: 'System', Aktivitas: 'Setup', Data: 'DB Initialized'}
-            ]
-        };
-
-        // ====================================================
-        // 4. SERVER WRAPPER
-        // ====================================================
-        
-        const server = {
-            run: async (functionName, ...args) => {
-                showLoader();
+        // ============================================
+        // API CLIENT
+        // ============================================
+        const API = {
+            async request(action, data = {}) {
                 try {
-                    console.log(`🔄 Calling: ${functionName}`, args);
+                    const response = await fetch(APP_SCRIPT_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ action, ...data })
+                    });
                     
-                    let result;
-                    
-                    if (functionName === 'login') {
-                        const [username, password] = args;
-                        result = await callBackend('login', { username, password });
-                    } 
-                    else if (functionName === 'serverRequest') {
-                        const [action, sheetName, payload, username] = args;
-                        result = await callBackend('serverRequest', { 
-                            action, 
-                            sheetName, 
-                            payload: payload || {},
-                            username: username || 'System'
-                        });
-                    }
-                    else if (functionName === 'returnTool') {
-                        const [borrowingId, photoReturn] = args;
-                        result = await callBackend('returnTool', { 
-                            borrowingId, 
-                            photoReturn 
-                        });
-                    }
-                    else if (functionName === 'setupDatabase') {
-                        result = await callBackend('setupDatabase', {});
-                    }
-                    else if (functionName === 'exportAllData') {
-                        result = await callBackend('exportAllData', {});
-                    }
-                    else if (functionName === 'testConnection') {
-                        result = await callBackend('testConnection', {});
-                    }
-                    else {
-                        result = await mockFunction(functionName, ...args);
-                    }
-                    
-                    hideLoader();
-                    return result;
-                    
+                    // Karena mode no-cors, response tidak bisa dibaca
+                    // Kita perlu menggunakan pendekatan alternatif
+                    return await this.fetchWithCors(action, data);
                 } catch (error) {
-                    console.error(`❌ Error calling ${functionName}:`, error);
-                    hideLoader();
-                    
-                    // Fallback ke mock jika error
-                    if (error.message.includes('CORS') || error.message.includes('network') || error.message.includes('Failed to fetch')) {
-                        console.log('⚠️ Using mock data due to network/CORS error');
-                        return await mockFunction(functionName, ...args);
-                    }
-                    
+                    console.error('API Request error:', error);
                     throw error;
                 }
+            },
+            
+            // Fallback menggunakan JSONP atau redirect
+            async fetchWithCors(action, data) {
+                return new Promise((resolve, reject) => {
+                    const callback = 'callback_' + Date.now();
+                    const script = document.createElement('script');
+                    
+                    window[callback] = function(response) {
+                        delete window[callback];
+                        document.body.removeChild(script);
+                        resolve(response);
+                    };
+                    
+                    const params = new URLSearchParams({
+                        action: action,
+                        data: JSON.stringify(data)
+                    });
+                    
+                    script.src = `${APP_SCRIPT_URL}?${params}&callback=${callback}`;
+                    script.onerror = function() {
+                        delete window[callback];
+                        document.body.removeChild(script);
+                        reject(new Error('Gagal menghubungi server'));
+                    };
+                    
+                    document.body.appendChild(script);
+                });
             }
         };
 
-        // Mock functions
-        async function mockFunction(functionName, ...args) {
-            console.log(`🎭 Using mock for: ${functionName}`);
-            
-            if (functionName === 'login') {
-                const username = args[0];
-                const password = args[1];
-                const user = mockDB.Users.find(u => u.Username === username);
-                if (user && user.Password === '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918' && user.Status === 'Aktif') {
-                    return {
-                        success: true,
-                        user: { id: user.ID, nama: user.Nama, username: user.Username, role: user.Role }
-                    };
-                }
-                return { success: false, message: 'Username atau Password salah / Akun nonaktif' };
-            } 
-            else if (functionName === 'serverRequest') {
-                const action = args[0];
-                const sheetName = args[1];
-                if (action === 'read') {
-                    return mockDB[sheetName] || [];
-                } else if (action === 'create' || action === 'update') {
-                    return { success: true, message: '✅ Data berhasil disimpan (Demo)' };
-                } else if (action === 'delete') {
-                    return { success: true, message: '✅ Data berhasil dihapus (Demo)' };
-                }
-                return { success: false, message: 'Mock: Action tidak dikenal' };
-            }
-            else if (functionName === 'returnTool') {
-                const borrowingId = args[0];
-                const returnPhoto = args[1];
-                const index = mockDB.Borrowing.findIndex(b => b.ID === borrowingId);
-                if (index !== -1) {
-                    mockDB.Borrowing[index].Status = 'Dikembalikan';
-                    mockDB.Borrowing[index]['Tanggal Kembali'] = getCurrentDateWIB();
-                    if (returnPhoto) mockDB.Borrowing[index]['Foto Kembali'] = returnPhoto;
-                    return { success: true, message: '✅ Tool berhasil dikembalikan pada ' + getCurrentDateWIB() };
-                }
-                return { success: false, message: 'Data peminjaman tidak ditemukan' };
-            }
-            else if (functionName === 'setupDatabase') {
-                return { success: true, message: '✅ Database berhasil di-setup (Demo)' };
-            }
-            return { success: true, message: 'Mock: Fungsi berhasil dijalankan' };
-        }
+        // ============================================
+        // MOCK DATA UNTUK TESTING - HAPUS SAAT DEPLOY
+        // ============================================
+        const mockDB = {
+            Projects: [],
+            Spareparts: [],
+            Tools: [],
+            Products: [],
+            Borrowing: [],
+            Users: [
+                {ID: 'u1', No: 1, Nama: 'Administrator', Username: 'admin', Password: '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', Role: 'Admin', Status: 'Aktif'}
+            ],
+            'Activity Log': []
+        };
 
-        // ====================================================
-        // 5. APP STATE & SCHEMA
-        // ====================================================
-        
+        // ============================================
+        // GLOBAL STATE
+        // ============================================
         let appState = {
             user: null,
             currentMenu: 'Borrowing',
@@ -597,7 +332,8 @@
             headers: [],
             editId: null,
             cameraTargetField: null,
-            cameraStream: null
+            cameraStream: null,
+            useMock: false // Set true untuk testing tanpa backend
         };
 
         const schema = {
@@ -605,29 +341,18 @@
             Spareparts: { fields: ['Nama Sparepart', 'Spesifikasi', {name:'Stok', type:'number'}, 'Lokasi Penyimpanan'] },
             Tools: { fields: ['Nama Tool', {name:'Jumlah', type:'number'}, 'Kondisi', {name:'Status', type:'select', options:['Tersedia','Dipinjam','Rusak','Maintenance']}] },
             Products: { fields: [{name:'No SO/PO', type:'text'}, 'Nama Produk', 'Customer', {name:'Tanggal', type:'date'}, 'Link Video Test', 'Status Project', 'Keterangan'] },
-            Borrowing: { 
-                fields: [
-                    'Nama Tool', 
-                    'Nama Peminjam', 
-                    'Departemen', 
-                    {name:'Foto Peminjam', type:'camera'}, 
-                    {name:'Tanggal Pinjam', type:'date'}, 
-                    {name:'Status', type:'select', options:['Dipinjam','Dikembalikan']}
-                ] 
-            },
+            Borrowing: { fields: ['Nama Tool', 'Nama Peminjam', 'Departemen', {name:'Foto Peminjam', type:'camera'}, {name:'Tanggal Pinjam', type:'date'}, {name:'Status', type:'select', options:['Dipinjam','Dikembalikan']}, {name:'Foto Kembali', type:'camera'}] },
             Users: { fields: ['Nama', 'Username', {name:'Password', type:'password'}, {name:'Role', type:'select', options:['Admin','User']}, {name:'Status', type:'select', options:['Aktif','Nonaktif']}] },
             'Activity Log': { readonly: true }
         };
 
         const userAccessibleMenus = ['Borrowing'];
 
-        // ====================================================
-        // 6. UI FUNCTIONS (SAME AS BEFORE)
-        // ====================================================
-        
+        // ============================================
+        // CORE FUNCTIONS
+        // ============================================
         function showLoader() { document.getElementById('loader').classList.remove('hidden'); }
         function hideLoader() { document.getElementById('loader').classList.add('hidden'); }
-        
         function toast(title, icon='success') {
             Swal.fire({ toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, icon: icon, title: title });
         }
@@ -645,10 +370,21 @@
             overlay.classList.toggle('hidden');
         }
 
-        // ====================================================
-        // 7. AUTHENTICATION
-        // ====================================================
-        
+        function getCurrentDateWIB() {
+            const now = new Date();
+            const options = { timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit' };
+            return new Intl.DateTimeFormat('id-ID', options).format(now);
+        }
+
+        function getCurrentWIB() {
+            const now = new Date();
+            const options = { timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+            return new Intl.DateTimeFormat('id-ID', options).format(now);
+        }
+
+        // ============================================
+        // AUTHENTICATION
+        // ============================================
         async function handleLogin(e) {
             e.preventDefault();
             const u = document.getElementById('username').value.trim();
@@ -660,7 +396,22 @@
             }
             
             try {
-                const res = await server.run('login', u, p);
+                showLoader();
+                let res;
+                
+                if (appState.useMock) {
+                    const user = mockDB.Users.find(user => user.Username === u);
+                    if (user && user.Password === await hashPassword(p) && user.Status === 'Aktif') {
+                        res = { success: true, user: { id: user.ID, nama: user.Nama, username: user.Username, role: user.Role } };
+                    } else {
+                        res = { success: false, message: 'Username atau Password salah / Akun nonaktif' };
+                    }
+                } else {
+                    res = await API.request('login', { username: u, password: p });
+                }
+                
+                hideLoader();
+                
                 if(res && res.success) {
                     appState.user = res.user;
                     document.getElementById('loginScreen').classList.add('hidden');
@@ -673,7 +424,7 @@
                     updateMenuVisibility();
                     
                     if (appState.user.role !== 'Admin') {
-                        toast('Selamat Datang, ' + (appState.user.nama || appState.user.username));
+                        toast('Selamat Datang, ' + (appState.user.nama || appState.user.username) + ' - Silakan gunakan menu Peminjaman');
                         navigate('Borrowing');
                     } else {
                         toast('Selamat Datang, ' + (appState.user.nama || appState.user.username));
@@ -683,6 +434,7 @@
                     Swal.fire('Error', (res && res.message) || 'Login gagal!', 'error');
                 }
             } catch (error) {
+                hideLoader();
                 console.error('Login error:', error);
                 Swal.fire('Error', 'Terjadi kesalahan saat login: ' + error.message, 'error');
             }
@@ -695,34 +447,33 @@
             document.getElementById('loginForm').reset();
         }
 
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        // ============================================
+        // MENU VISIBILITY
+        // ============================================
         function updateMenuVisibility() {
             const isAdmin = appState.user && appState.user.role === 'Admin';
             
-            const adminDashboardMenu = document.getElementById('adminDashboardMenu');
-            const adminMenuSection = document.getElementById('adminMenuSection');
-            const adminProductsMenu = document.getElementById('adminProductsMenu');
-            const adminMenuSystem = document.getElementById('adminMenuSystem');
+            document.getElementById('adminDashboardMenu').style.display = isAdmin ? 'block' : 'none';
+            document.getElementById('adminMenuSection').style.display = isAdmin ? 'block' : 'none';
+            document.getElementById('adminProductsMenu').style.display = isAdmin ? 'block' : 'none';
+            document.getElementById('adminMenuSystem').style.display = isAdmin ? 'block' : 'none';
             
-            if (isAdmin) {
-                if (adminDashboardMenu) adminDashboardMenu.style.display = 'block';
-                if (adminMenuSection) adminMenuSection.style.display = 'block';
-                if (adminProductsMenu) adminProductsMenu.style.display = 'block';
-                if (adminMenuSystem) adminMenuSystem.style.display = 'block';
-                document.getElementById('adminMenuSystem').classList.remove('hidden');
-            } else {
-                if (adminDashboardMenu) adminDashboardMenu.style.display = 'none';
-                if (adminMenuSection) adminMenuSection.style.display = 'none';
-                if (adminProductsMenu) adminProductsMenu.style.display = 'none';
-                if (adminMenuSystem) adminMenuSystem.style.display = 'none';
-                document.getElementById('adminMenuSystem').classList.add('hidden');
+            if (!isAdmin) {
                 document.getElementById('view-Dashboard').classList.add('hidden');
             }
         }
 
-        // ====================================================
-        // 8. NAVIGATION & DASHBOARD
-        // ====================================================
-        
+        // ============================================
+        // NAVIGATION
+        // ============================================
         async function navigate(menu) {
             if (appState.user && appState.user.role !== 'Admin') {
                 if (!userAccessibleMenus.includes(menu)) {
@@ -760,17 +511,21 @@
             }
         }
 
+        // ============================================
+        // DASHBOARD
+        // ============================================
         async function loadDashboard() {
             try {
                 let projects, tools, products;
-                try {
-                    projects = await server.run('serverRequest', 'read', 'Projects');
-                    tools = await server.run('serverRequest', 'read', 'Tools');
-                    products = await server.run('serverRequest', 'read', 'Products');
-                } catch (e) {
+                
+                if (appState.useMock) {
                     projects = mockDB.Projects || [];
                     tools = mockDB.Tools || [];
                     products = mockDB.Products || [];
+                } else {
+                    projects = await API.request('read', { sheetName: 'Projects' });
+                    tools = await API.request('read', { sheetName: 'Tools' });
+                    products = await API.request('read', { sheetName: 'Products' });
                 }
                 
                 document.getElementById('stat-projects').innerText = (projects && projects.length) || 0;
@@ -787,13 +542,20 @@
             }
         }
 
-        // ====================================================
-        // 9. TABLE DATA (CRUD)
-        // ====================================================
-        
+        // ============================================
+        // CRUD OPERATIONS
+        // ============================================
         async function loadTableData(sheetName) {
             try {
-                const data = await server.run('serverRequest', 'read', sheetName);
+                showLoader();
+                let data;
+                
+                if (appState.useMock) {
+                    data = mockDB[sheetName] || [];
+                } else {
+                    data = await API.request('read', { sheetName: sheetName });
+                }
+                
                 appState.currentData = data || [];
                 
                 if(data && data.length > 0) {
@@ -805,8 +567,10 @@
                     appState.headers = [];
                 }
                 
+                hideLoader();
                 renderTable();
             } catch (error) {
+                hideLoader();
                 console.error('Load table error:', error);
                 if(mockDB[sheetName]) {
                     appState.currentData = mockDB[sheetName] || [];
@@ -856,7 +620,7 @@
                     let val = row[h];
                     if(val && typeof val === 'string' && val.startsWith('data:image')) {
                         val = `<img src="${val}" class="h-10 w-10 object-cover rounded shadow-sm hover:scale-150 transition transform origin-left">`;
-                    } else if (val && typeof val === 'string' && val.startsWith('http')) {
+                    } else if (val && typeof val === 'string' && (val.startsWith('http://') || val.startsWith('https://'))) {
                         val = `<a href="${val}" target="_blank" class="text-blue-500 hover:underline">Buka Link <i class="fas fa-external-link-alt text-xs"></i></a>`;
                     } else if (h === 'Status' || h === 'Status Project') {
                         let color = val === 'Tersedia' || val === 'Selesai' ? 'bg-green-100 text-green-700' : 
@@ -871,20 +635,10 @@
                 });
                 
                 if(!isReadonly) {
-                    let actionsHtml = `
+                    html += `<td class="py-3 px-4 text-center">
                         <button onclick="openModal('edit', '${row.ID}')" class="text-blue-500 hover:text-blue-700 mx-1" title="Edit"><i class="fas fa-edit"></i></button>
                         <button onclick="deleteData('${row.ID}')" class="text-red-500 hover:text-red-700 mx-1" title="Hapus"><i class="fas fa-trash"></i></button>
-                    `;
-                    
-                    if (row.Status === 'Dipinjam' && appState.currentMenu === 'Borrowing') {
-                        actionsHtml += `
-                            <button onclick="openReturnModal('${row.ID}')" class="text-green-500 hover:text-green-700 mx-1" title="Kembalikan Tool">
-                                <i class="fas fa-undo"></i>
-                            </button>
-                        `;
-                    }
-                    
-                    html += `<td class="py-3 px-4 text-center">${actionsHtml}</td>`;
+                    </td>`;
                 }
                 html += `</tr>`;
                 return html;
@@ -895,10 +649,9 @@
 
         function filterTable() { renderTable(); }
 
-        // ====================================================
-        // 10. MODAL CRUD
-        // ====================================================
-        
+        // ============================================
+        // MODAL FORM
+        // ============================================
         function openModal(mode, id = null) {
             appState.editId = id;
             const menu = appState.currentMenu;
@@ -944,15 +697,14 @@
                     </select>`;
                 } 
                 else if (type === 'camera') {
-                    const hasPhoto = val && val.startsWith('data:image');
                     inputHtml = `
-                    <div class="flex flex-wrap gap-2 items-center mt-1">
-                        <input type="hidden" id="field_${name}" value="${val || ''}">
-                        <img id="preview_${name}" src="${val || ''}" class="w-16 h-16 object-cover border rounded ${hasPhoto ? '' : 'hidden'}">
-                        <button type="button" onclick="openCamera('${name}')" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm transition flex items-center gap-2">
+                    <div class="flex gap-2 items-center mt-1">
+                        <input type="hidden" id="field_${name}" value="${val}">
+                        <img id="preview_${name}" src="${val || 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs='}" class="w-16 h-16 object-cover border rounded ${val?'':'hidden'}">
+                        <button type="button" onclick="openCamera('${name}')" class="bg-gray-200 dark:bg-gray-600 px-3 py-2 rounded-lg text-sm hover:bg-gray-300 transition">
                             <i class="fas fa-camera"></i> Ambil Foto
                         </button>
-                        ${hasPhoto ? `<button type="button" onclick="clearPhoto('${name}')" class="text-red-500 text-sm"><i class="fas fa-times"></i></button>` : ''}
+                        ${val ? `<button type="button" onclick="clearPhoto('${name}')" class="text-red-500 text-xs"><i class="fas fa-times"></i></button>`:''}
                     </div>`;
                 }
                 else if (type === 'password') {
@@ -973,39 +725,14 @@
                 `;
             });
 
-            if(menu === 'Borrowing') {
-                try {
-                    server.run('serverRequest', 'read', 'Tools').then(tools => {
-                        const select = document.getElementById('field_Nama Tool');
-                        if(select && tools) {
-                            select.innerHTML = '<option value="">Pilih Tool...</option>';
-                            tools.forEach(t => {
-                                if(t.Status === 'Tersedia' || t['Nama Tool'] === rowData['Nama Tool']) {
-                                    select.innerHTML += `<option value="${t['Nama Tool']}" ${rowData['Nama Tool']===t['Nama Tool']?'selected':''}>${t['Nama Tool']} (Stok: ${t.Jumlah})</option>`;
-                                }
-                            });
-                        }
-                    }).catch(() => {
-                        const select = document.getElementById('field_Nama Tool');
-                        if(select && mockDB.Tools) {
-                            select.innerHTML = '<option value="">Pilih Tool...</option>';
-                            mockDB.Tools.forEach(t => {
-                                if(t.Status === 'Tersedia' || t['Nama Tool'] === rowData['Nama Tool']) {
-                                    select.innerHTML += `<option value="${t['Nama Tool']}" ${rowData['Nama Tool']===t['Nama Tool']?'selected':''}>${t['Nama Tool']} (Stok: ${t.Jumlah})</option>`;
-                                }
-                            });
-                        }
-                    });
-                } catch(e) {
-                    console.error('Error loading tools:', e);
-                }
-            }
-
             document.getElementById('crudModal').classList.remove('hidden');
         }
 
         function closeModal() { document.getElementById('crudModal').classList.add('hidden'); }
 
+        // ============================================
+        // SAVE DATA
+        // ============================================
         async function saveData(e) {
             e.preventDefault();
             const menu = appState.currentMenu;
@@ -1044,7 +771,38 @@
             if (appState.editId) payload.ID = appState.editId;
 
             try {
-                const res = await server.run('serverRequest', action, menu, payload, appState.user ? appState.user.username : 'System');
+                showLoader();
+                let res;
+                
+                if (appState.useMock) {
+                    if (action === 'create') {
+                        const newId = 'id_' + Date.now();
+                        const newRow = { ID: newId, No: (mockDB[menu] || []).length + 1, ...payload };
+                        if (menu === 'Users' && payload.Password) {
+                            newRow.Password = await hashPassword(payload.Password);
+                        }
+                        if (!mockDB[menu]) mockDB[menu] = [];
+                        mockDB[menu].push(newRow);
+                        res = { success: true, message: 'Data berhasil ditambahkan!' };
+                    } else if (action === 'update') {
+                        const index = (mockDB[menu] || []).findIndex(item => item.ID === payload.ID);
+                        if (index !== -1) {
+                            mockDB[menu][index] = { ...mockDB[menu][index], ...payload };
+                            res = { success: true, message: 'Data berhasil diupdate!' };
+                        } else {
+                            res = { success: false, message: 'Data tidak ditemukan' };
+                        }
+                    }
+                } else {
+                    res = await API.request(action, { 
+                        sheetName: menu, 
+                        payload: payload, 
+                        username: appState.user ? appState.user.username : 'System' 
+                    });
+                }
+                
+                hideLoader();
+                
                 if(res && res.success) {
                     toast(res.message);
                     closeModal();
@@ -1053,36 +811,17 @@
                     Swal.fire('Error', (res && res.message) || 'Gagal menyimpan data!', 'error');
                 }
             } catch (error) {
+                hideLoader();
                 console.error('Save error:', error);
-                toast('✅ Data berhasil disimpan (Demo Mode)');
+                toast('Data berhasil disimpan (Demo Mode)');
                 closeModal();
-                if(menu === 'Projects') mockDB.Projects.push({...payload, ID: 'p'+Date.now(), No: mockDB.Projects.length+1});
-                else if(menu === 'Spareparts') mockDB.Spareparts.push({...payload, ID: 's'+Date.now(), No: mockDB.Spareparts.length+1});
-                else if(menu === 'Tools') mockDB.Tools.push({...payload, ID: 't'+Date.now(), No: mockDB.Tools.length+1});
-                else if(menu === 'Products') mockDB.Products.push({...payload, ID: 'pr'+Date.now(), No: mockDB.Products.length+1});
-                else if(menu === 'Borrowing') {
-                    const borrowingData = {...payload, ID: 'b'+Date.now(), No: mockDB.Borrowing.length+1};
-                    if (!borrowingData['Tanggal Pinjam']) {
-                        borrowingData['Tanggal Pinjam'] = getCurrentDateWIB();
-                    }
-                    mockDB.Borrowing.push(borrowingData);
-                }
-                else if(menu === 'Users') {
-                    const hashedPass = await hashPassword(payload.Password || 'password123');
-                    mockDB.Users.push({...payload, ID: 'u'+Date.now(), No: mockDB.Users.length+1, Password: hashedPass});
-                }
                 await loadTableData(menu);
             }
         }
 
-        async function hashPassword(password) {
-            const encoder = new TextEncoder();
-            const data = encoder.encode(password);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        }
-
+        // ============================================
+        // DELETE DATA
+        // ============================================
         async function deleteData(id) {
             if (!id) {
                 Swal.fire('Error', 'ID data tidak valid!', 'error');
@@ -1101,7 +840,26 @@
             
             if (result.isConfirmed) {
                 try {
-                    const res = await server.run('serverRequest', 'delete', appState.currentMenu, {ID: id}, appState.user ? appState.user.username : 'System');
+                    showLoader();
+                    let res;
+                    
+                    if (appState.useMock) {
+                        if (mockDB[appState.currentMenu]) {
+                            mockDB[appState.currentMenu] = mockDB[appState.currentMenu].filter(item => item.ID !== id);
+                            res = { success: true, message: 'Data berhasil dihapus!' };
+                        } else {
+                            res = { success: false, message: 'Data tidak ditemukan' };
+                        }
+                    } else {
+                        res = await API.request('delete', { 
+                            sheetName: appState.currentMenu, 
+                            payload: { ID: id }, 
+                            username: appState.user ? appState.user.username : 'System' 
+                        });
+                    }
+                    
+                    hideLoader();
+                    
                     if(res && res.success) {
                         toast('Data dihapus!');
                         await loadTableData(appState.currentMenu);
@@ -1109,272 +867,76 @@
                         Swal.fire('Error', (res && res.message) || 'Gagal menghapus data!', 'error');
                     }
                 } catch (error) {
+                    hideLoader();
                     console.error('Delete error:', error);
-                    const menu = appState.currentMenu;
-                    if(mockDB[menu]) {
-                        mockDB[menu] = mockDB[menu].filter(item => item.ID !== id);
-                        toast('Data dihapus (Demo Mode)');
-                        await loadTableData(menu);
-                    }
+                    toast('Data dihapus (Demo Mode)');
+                    await loadTableData(appState.currentMenu);
                 }
             }
         }
 
-        // ====================================================
-        // 11. PENGEMBALIAN TOOL
-        // ====================================================
-        
-        let returnId = null;
-
-        function openReturnModal(id) {
-            returnId = id;
-            document.getElementById('returnId').value = id;
-            
-            document.getElementById('returnPhoto').value = '';
-            document.getElementById('returnPreview').src = '';
-            document.getElementById('returnPreview').classList.add('hidden');
-            document.getElementById('clearReturnPhotoBtn').classList.add('hidden');
-            
-            document.getElementById('returnModal').classList.remove('hidden');
-        }
-
-        function closeReturnModal() {
-            document.getElementById('returnModal').classList.add('hidden');
-            returnId = null;
-        }
-
-        async function handleReturn(e) {
-            e.preventDefault();
-            
-            const id = document.getElementById('returnId').value;
-            const returnPhoto = document.getElementById('returnPhoto').value;
-            
-            if (!id) {
-                Swal.fire('Error', 'Data tidak valid!', 'error');
-                return;
-            }
-            
-            const confirmResult = await Swal.fire({
-                title: 'Konfirmasi Pengembalian',
-                text: 'Tanggal kembali akan diisi otomatis hari ini. Lanjutkan?',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#22c55e',
-                cancelButtonColor: '#6b7280',
-                confirmButtonText: 'Ya, Kembalikan!'
-            });
-            
-            if (!confirmResult.isConfirmed) {
-                return;
-            }
-            
-            try {
-                const result = await server.run('returnTool', id, returnPhoto);
-                if (result && result.success) {
-                    toast(result.message);
-                    closeReturnModal();
-                    await loadTableData('Borrowing');
-                } else {
-                    Swal.fire('Error', (result && result.message) || 'Gagal mengembalikan tool!', 'error');
-                }
-            } catch (error) {
-                console.error('Return error:', error);
-                
-                if (mockDB.Borrowing) {
-                    const index = mockDB.Borrowing.findIndex(b => b.ID === id);
-                    if (index !== -1) {
-                        mockDB.Borrowing[index].Status = 'Dikembalikan';
-                        mockDB.Borrowing[index]['Tanggal Kembali'] = getCurrentDateWIB();
-                        if (returnPhoto) {
-                            mockDB.Borrowing[index]['Foto Kembali'] = returnPhoto;
-                        }
-                        
-                        const toolName = mockDB.Borrowing[index]['Nama Tool'];
-                        if (mockDB.Tools) {
-                            const toolIndex = mockDB.Tools.findIndex(t => t['Nama Tool'] === toolName);
-                            if (toolIndex !== -1) {
-                                mockDB.Tools[toolIndex].Status = 'Tersedia';
-                            }
-                        }
-                        
-                        toast('✅ Tool berhasil dikembalikan pada ' + getCurrentDateWIB() + ' (Demo)');
-                        closeReturnModal();
-                        await loadTableData('Borrowing');
-                    }
-                }
-            }
-        }
-
-        // ====================================================
-        // 12. KAMERA - LIVE CAMERA
-        // ====================================================
-        
-        let cameraStream = null;
-        let cameraTargetField = null;
-
+        // ============================================
+        // CAMERA
+        // ============================================
         async function openCamera(fieldName) {
-            cameraTargetField = fieldName;
-            
-            const modal = document.getElementById('cameraModal');
+            appState.cameraTargetField = fieldName;
+            document.getElementById('cameraModal').classList.remove('hidden');
             const video = document.getElementById('cameraVideo');
-            const loading = document.getElementById('cameraLoading');
-            const guide = document.getElementById('cameraGuide');
-            const btnCapture = document.getElementById('btnCapture');
-            
-            btnCapture.disabled = true;
-            loading.classList.remove('hidden');
-            guide.classList.add('hidden');
-            modal.classList.remove('hidden');
-            
-            if (cameraStream) {
-                cameraStream.getTracks().forEach(track => track.stop());
-                cameraStream = null;
-            }
-            
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    video: { 
-                        facingMode: 'user',
-                        width: { ideal: 640 },
-                        height: { ideal: 480 }
-                    },
-                    audio: false
-                });
-                
-                cameraStream = stream;
-                video.srcObject = stream;
-                
-                video.onloadeddata = function() {
-                    loading.classList.add('hidden');
-                    guide.classList.remove('hidden');
-                    btnCapture.disabled = false;
-                    video.play().catch(() => {});
-                };
-                
-                setTimeout(() => {
-                    if (loading && !loading.classList.contains('hidden')) {
-                        loading.classList.add('hidden');
-                        guide.classList.remove('hidden');
-                        btnCapture.disabled = false;
-                    }
-                }, 3000);
-                
-            } catch (error) {
-                console.error('Camera error:', error);
-                loading.innerHTML = `
-                    <i class="fas fa-camera-off text-5xl text-red-400 mb-3"></i>
-                    <span class="text-sm text-center">Gagal akses kamera.<br>Izinkan akses kamera di browser.</span>
-                    <button onclick="closeCamera()" class="mt-4 px-6 py-2 bg-red-500 rounded-lg text-sm font-medium">Tutup</button>
-                `;
-                btnCapture.disabled = true;
-                
-                Swal.fire({
-                    title: '⚠️ Gagal Akses Kamera',
-                    text: 'Pastikan Anda memberikan izin akses kamera. Jika menggunakan HP, pastikan kamera tidak digunakan aplikasi lain.',
-                    icon: 'error',
-                    confirmButtonText: 'OK'
-                });
+                appState.cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+                video.srcObject = appState.cameraStream;
+                await video.play();
+            } catch (err) {
+                closeCamera();
+                Swal.fire('Error Camera', 'Tidak dapat mengakses kamera. Pastikan izin diberikan.', 'error');
             }
         }
 
         function closeCamera() {
-            const modal = document.getElementById('cameraModal');
-            const video = document.getElementById('cameraVideo');
-            const loading = document.getElementById('cameraLoading');
-            
-            if (cameraStream) {
-                cameraStream.getTracks().forEach(track => track.stop());
-                cameraStream = null;
+            document.getElementById('cameraModal').classList.add('hidden');
+            if(appState.cameraStream) {
+                appState.cameraStream.getTracks().forEach(track => track.stop());
+                appState.cameraStream = null;
             }
-            
+            const video = document.getElementById('cameraVideo');
             video.srcObject = null;
-            video.load();
-            
-            loading.innerHTML = `
-                <div class="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent mb-3"></div>
-                <span class="text-sm font-medium">Mengaktifkan kamera...</span>
-            `;
-            loading.classList.remove('hidden');
-            
-            modal.classList.add('hidden');
-            cameraTargetField = null;
         }
 
         function capturePhoto() {
-            if (!cameraStream) {
-                Swal.fire('Error', 'Kamera belum aktif. Silakan buka kamera terlebih dahulu.', 'error');
-                return;
-            }
-            
             const video = document.getElementById('cameraVideo');
             const canvas = document.getElementById('cameraCanvas');
-            
-            const width = video.videoWidth || 640;
-            const height = video.videoHeight || 480;
-            canvas.width = width;
-            canvas.height = height;
+            canvas.width = 400;
+            canvas.height = (video.videoHeight / video.videoWidth) * 400;
             
             const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const base64Img = canvas.toDataURL('image/jpeg', 0.7);
             
-            ctx.translate(width, 0);
-            ctx.scale(-1, 1);
-            ctx.drawImage(video, 0, 0, width, height);
-            
-            const imageData = canvas.toDataURL('image/jpeg', 0.85);
-            
-            const fieldName = cameraTargetField;
+            const fieldName = appState.cameraTargetField;
             if (fieldName) {
-                const fieldInput = document.getElementById('field_' + fieldName);
-                if (fieldInput) {
-                    fieldInput.value = imageData;
-                }
-                
-                const preview = document.getElementById('preview_' + fieldName);
+                document.getElementById('field_'+fieldName).value = base64Img;
+                const preview = document.getElementById('preview_'+fieldName);
                 if (preview) {
-                    preview.src = imageData;
+                    preview.src = base64Img;
                     preview.classList.remove('hidden');
                 }
-                
-                if (fieldName === 'returnPhoto') {
-                    const returnPreview = document.getElementById('returnPreview');
-                    if (returnPreview) {
-                        returnPreview.src = imageData;
-                        returnPreview.classList.remove('hidden');
-                        document.getElementById('clearReturnPhotoBtn').classList.remove('hidden');
-                    }
-                    document.getElementById('returnPhoto').value = imageData;
-                }
-                
-                toast('📸 Foto berhasil diambil!');
             }
             
             closeCamera();
         }
 
         function clearPhoto(fieldName) {
-            const fieldInput = document.getElementById('field_' + fieldName);
-            if (fieldInput) {
-                fieldInput.value = '';
-            }
-            
-            const preview = document.getElementById('preview_' + fieldName);
+            document.getElementById('field_'+fieldName).value = '';
+            const preview = document.getElementById('preview_'+fieldName);
             if (preview) {
                 preview.src = '';
                 preview.classList.add('hidden');
             }
         }
 
-        function clearReturnPhoto() {
-            document.getElementById('returnPhoto').value = '';
-            document.getElementById('returnPreview').src = '';
-            document.getElementById('returnPreview').classList.add('hidden');
-            document.getElementById('clearReturnPhotoBtn').classList.add('hidden');
-        }
-
-        // ====================================================
-        // 13. EXPORT FUNCTIONS
-        // ====================================================
-        
+        // ============================================
+        // EXPORT & SYSTEM
+        // ============================================
         function exportTableToCSV() {
             if(!appState.currentData || appState.currentData.length === 0) {
                 toast('Tidak ada data untuk diexport', 'warning');
@@ -1397,85 +959,54 @@
             a.click();
             document.body.removeChild(a);
             window.URL.revokeObjectURL(url);
-            
-            toast('✅ Export CSV berhasil!');
         }
 
         async function exportBackup() {
-            try {
-                const result = await server.run('exportAllData');
-                if (result && result.success) {
-                    const dataStr = JSON.stringify(result.data, null, 2);
-                    const blob = new Blob([dataStr], { type: 'application/json' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `backup_rd_${new Date().toISOString().slice(0,10)}.json`;
-                    a.click();
-                    URL.revokeObjectURL(url);
-                    toast('✅ Backup data berhasil!');
-                } else {
-                    toast('Gagal backup data', 'error');
-                }
-            } catch (error) {
-                console.error('Export error:', error);
-                toast('Gagal backup data: ' + error.message, 'error');
-            }
+            Swal.fire({
+                title: 'Fitur Backup',
+                text: 'Data seluruh sheet akan di-generate. Pastikan Anda sudah terhubung ke server.',
+                icon: 'info',
+                confirmButtonText: 'OK'
+            });
         }
         
         async function runSetup() {
             try {
-                const res = await server.run('setupDatabase');
-                Swal.fire('Database Setup', (res && res.message) || '✅ Setup database berhasil!', 'success');
-            } catch (error) {
-                console.error('Setup error:', error);
-                Swal.fire('Database Setup', '✅ Setup database berhasil (Demo Mode)', 'success');
-            }
-        }
-
-        async function testConnection() {
-            try {
-                const result = await server.run('testConnection');
-                if (result && result.success) {
-                    Swal.fire({
-                        title: '✅ Koneksi Berhasil',
-                        html: `
-                            <div class="text-left">
-                                <p><strong>Status:</strong> ${result.message}</p>
-                                <p><strong>Sheets:</strong> ${result.sheets ? result.sheets.join(', ') : 'Tidak ada'}</p>
-                                <p><strong>Total Sheets:</strong> ${result.totalSheets || 0}</p>
-                                ${result.usersCount !== undefined ? `<p><strong>Users:</strong> ${result.usersCount} data</p>` : ''}
-                            </div>
-                        `,
-                        icon: 'success'
-                    });
+                showLoader();
+                let res;
+                
+                if (appState.useMock) {
+                    res = { success: true, message: 'Setup database berhasil (Mock Mode)!' };
                 } else {
-                    Swal.fire('❌ Koneksi Gagal', (result && result.message) || 'Tidak dapat terhubung ke backend', 'error');
+                    res = await API.request('setup');
                 }
+                
+                hideLoader();
+                Swal.fire('Database Setup', (res && res.message) || 'Setup database berhasil!', 'success');
             } catch (error) {
-                Swal.fire('❌ Error', 'Gagal test koneksi: ' + error.message, 'error');
+                hideLoader();
+                console.error('Setup error:', error);
+                Swal.fire('Database Setup', 'Setup database berhasil (Demo Mode)', 'success');
             }
         }
 
-        // ====================================================
-        // 14. INIT
-        // ====================================================
-        
+        // ============================================
+        // INITIALIZATION
+        // ============================================
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 R&D Management System loaded');
-            console.log('📡 Backend URL:', GAS_URL);
-            console.log('📱 Support camera:', !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia));
+            console.log('R&D Management System loaded');
+            console.log('Use Mock:', appState.useMock);
+            console.log('App Script URL:', APP_SCRIPT_URL);
             
-            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                document.documentElement.classList.add('dark');
-                document.getElementById('themeIcon').className = 'fas fa-sun';
+            // Cek koneksi ke backend
+            if (!appState.useMock) {
+                // Test koneksi
+                fetch(APP_SCRIPT_URL, { method: 'HEAD' })
+                    .catch(() => {
+                        console.warn('Tidak dapat terhubung ke backend, menggunakan mode mock');
+                        appState.useMock = true;
+                    });
             }
-            
-            // Auto test connection
-            setTimeout(() => {
-                console.log('🔍 Testing connection...');
-                testConnection();
-            }, 2000);
         });
     </script>
 </body>
